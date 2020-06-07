@@ -4,6 +4,7 @@ import (
 	"log"
 	"runtime"
 	"strings"
+	"time"
 
 	"github.com/aws/aws-sdk-go/service/sqs"
 	"github.com/desertbit/fillpdf"
@@ -21,6 +22,20 @@ func main() {
 		log.Print("OS appears to be Linux - using real printer")
 		printer = &pos.ThermalPrinter{}
 	}
+
+	processMessages()
+
+	tick := time.Tick(20 * time.Second)
+	for {
+		select {
+		case <-tick:
+			processMessages()
+		}
+	}
+}
+
+func processMessages() {
+	log.Print("Checking for messages")
 	messages := queue.GetMessages()
 	parseMessages(messages)
 }
@@ -40,6 +55,8 @@ func parseMessages(messages []*sqs.Message) {
 			log.Print("Message type is unknown")
 			printer.PrintText(*message.Body)
 		}
+
+		queue.DeleteMessage(*message.ReceiptHandle)
 	}
 }
 

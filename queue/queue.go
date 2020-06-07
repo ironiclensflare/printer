@@ -13,7 +13,7 @@ func GetMessages() []*sqs.Message {
 	var maxMessage int64 = 10
 	var queueURL = os.Getenv("PRINTER_QUEUE_URL")
 	var waitTimeSeconds int64 = 20
-	var visibilityTimeout int64 = 0
+	var visibilityTimeout int64 = 5
 
 	session, err := session.NewSession()
 	if err != nil {
@@ -33,4 +33,26 @@ func GetMessages() []*sqs.Message {
 	}
 
 	return output.Messages
+}
+
+// DeleteMessage deletes a message from the queue.
+func DeleteMessage(receiptHandle string) {
+	var queueURL = os.Getenv("PRINTER_QUEUE_URL")
+
+	session, err := session.NewSession()
+	if err != nil {
+		log.Fatal(err)
+	}
+	client := sqs.New(session)
+
+	request := sqs.DeleteMessageInput{
+		QueueUrl:      &queueURL,
+		ReceiptHandle: &receiptHandle,
+	}
+	output, err := client.DeleteMessage(&request)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.Print(output)
 }
