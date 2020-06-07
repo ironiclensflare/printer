@@ -3,32 +3,17 @@ package main
 import (
 	"fmt"
 	"io"
-	"os"
 	"os/exec"
 	"strings"
 
-	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/sqs"
 	"github.com/desertbit/fillpdf"
+	"github.com/ironiclensflare/printer/queue"
 )
 
 func main() {
-	var maxMessage int64 = 10
-	var queueURL = os.Getenv("PRINTER_QUEUE_URL")
-	var waitTimeSeconds int64 = 20
-	var visibilityTimeout int64 = 0
-
-	session, _ := session.NewSession()
-	client := sqs.New(session)
-
-	request := sqs.ReceiveMessageInput{
-		MaxNumberOfMessages: &maxMessage,
-		QueueUrl:            &queueURL,
-		WaitTimeSeconds:     &waitTimeSeconds,
-		VisibilityTimeout:   &visibilityTimeout,
-	}
-	output, _ := client.ReceiveMessage(&request)
-	parseMessages(output.Messages)
+	messages := queue.GetMessages()
+	parseMessages(messages)
 }
 
 func parseMessages(messages []*sqs.Message) {
