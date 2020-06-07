@@ -70,7 +70,7 @@ func sendTextToPrinter(text string) {
 }
 
 func sendFileToPrinter(filename string) {
-	cmd := exec.Command("lp", "-o page-left=12", filename)
+	cmd := exec.Command("lp", "-o page-left=30", filename)
 	out, _ := cmd.CombinedOutput()
 	fmt.Printf("%s\n", out)
 }
