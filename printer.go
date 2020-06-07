@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"runtime"
 	"strings"
@@ -30,15 +29,16 @@ func parseMessages(messages []*sqs.Message) {
 	for _, message := range messages {
 		switch getMessageType(message) {
 		case "CITATION":
-			fmt.Println("Message is a citation")
+			log.Print("Message is a citation")
 			body := strings.Replace(*message.Body, "!AWOO", "", 1)
 			parts := strings.SplitN(body, "|", 3)
 			name, offence, penalty := parts[0], parts[1], parts[2]
 			createCitation(name, offence, penalty)
 		case "STICKER":
-			fmt.Println("Message is a sticker")
+			log.Print("Message is a sticker")
 		case "UNKNOWN":
-			fmt.Println("Message type is unknown")
+			log.Print("Message type is unknown")
+			printer.PrintText(*message.Body)
 		}
 	}
 }
@@ -54,13 +54,15 @@ func getMessageType(message *sqs.Message) string {
 }
 
 func createCitation(name, offence, penalty string) {
-	fmt.Printf("Name: %v\nCrime: %v\nPenalty: %v\n", name, offence, penalty)
+	log.Printf("Name: %v\nCrime: %v\nPenalty: %v\n", name, offence, penalty)
 	form := fillpdf.Form{
 		"Name":    name,
 		"Offence": offence,
 		"Penalty": penalty,
 	}
 	err := fillpdf.Fill(form, "awoo.pdf", "awoo-filled.pdf", true)
-	fmt.Println(err)
+	if err != nil {
+		log.Fatal(err)
+	}
 	printer.PrintFile("awoo-filled.pdf")
 }
