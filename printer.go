@@ -2,16 +2,26 @@ package main
 
 import (
 	"fmt"
-	"io"
-	"os/exec"
+	"log"
+	"runtime"
 	"strings"
 
 	"github.com/aws/aws-sdk-go/service/sqs"
 	"github.com/desertbit/fillpdf"
+	"github.com/ironiclensflare/printer/pos"
 	"github.com/ironiclensflare/printer/queue"
 )
 
+var printer pos.Printer
+
 func main() {
+	if runtime.GOOS == "darwin" {
+		log.Print("OS appears to be Mac - using fake printer")
+		printer = &pos.FakePrinter{}
+	} else {
+		log.Print("OS appears to be Linux - using real printer")
+		printer = &pos.ThermalPrinter{}
+	}
 	messages := queue.GetMessages()
 	parseMessages(messages)
 }
@@ -43,23 +53,6 @@ func getMessageType(message *sqs.Message) string {
 	}
 }
 
-func sendTextToPrinter(text string) {
-	cmd := exec.Command("lp")
-	stdin, _ := cmd.StdinPipe()
-	go func() {
-		defer stdin.Close()
-		io.WriteString(stdin, text)
-	}()
-	out, _ := cmd.CombinedOutput()
-	fmt.Printf("%s\n", out)
-}
-
-func sendFileToPrinter(filename string) {
-	cmd := exec.Command("lp", filename)
-	out, _ := cmd.CombinedOutput()
-	fmt.Printf("%s\n", out)
-}
-
 func createCitation(name, offence, penalty string) {
 	fmt.Printf("Name: %v\nCrime: %v\nPenalty: %v\n", name, offence, penalty)
 	form := fillpdf.Form{
@@ -69,5 +62,5 @@ func createCitation(name, offence, penalty string) {
 	}
 	err := fillpdf.Fill(form, "awoo.pdf", "awoo-filled.pdf", true)
 	fmt.Println(err)
-	sendFileToPrinter("awoo-filled.pdf")
+	printer.PrintFile("awoo-filled.pdf")
 }
