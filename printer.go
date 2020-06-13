@@ -2,7 +2,7 @@ package main
 
 import (
 	"log"
-	"runtime"
+	"os"
 	"strings"
 	"time"
 
@@ -13,14 +13,21 @@ import (
 )
 
 var printer pos.Printer
+var useFakePrinter, keepMessagesInQueue bool
 
 func main() {
-	if runtime.GOOS == "darwin" {
-		log.Print("OS appears to be Mac - using fake printer")
+	useFakePrinter = isFeatureSet("--no-print")
+	keepMessagesInQueue = isFeatureSet("--no-delete")
+
+	if useFakePrinter {
+		log.Print("Using fake printer")
 		printer = &pos.FakePrinter{}
 	} else {
-		log.Print("OS appears to be Linux - using real printer")
 		printer = &pos.ThermalPrinter{}
+	}
+
+	if keepMessagesInQueue {
+		log.Print("Messages will not be deleted from queue")
 	}
 
 	processMessages()
@@ -56,7 +63,9 @@ func parseMessages(messages []*sqs.Message) {
 			printer.PrintText(*message.Body)
 		}
 
-		queue.DeleteMessage(*message.ReceiptHandle)
+		if !keepMessagesInQueue {
+			queue.DeleteMessage(*message.ReceiptHandle)
+		}
 	}
 }
 
@@ -82,4 +91,13 @@ func createCitation(name, offence, penalty string) {
 		log.Fatal(err)
 	}
 	printer.PrintFile("awoo-filled.pdf")
+}
+
+func isFeatureSet(feature string) bool {
+	for _, arg := range os.Args {
+		if arg == feature {
+			return true
+		}
+	}
+	return false
 }
