@@ -1,0 +1,4 @@
+services:
+  Printer:
+    type: '*github.com/ironiclensflare/printer/pos.ThermalPrinter'
+    interface: github.com/ironiclensflare/printer/pos.Printer
