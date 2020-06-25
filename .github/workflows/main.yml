@@ -17,7 +17,7 @@ jobs:
       run: go get -v github.com/cucumber/godog/cmd/godog
 
     - name: Run unit tests
-      run: go test test/*.go
+      run: go test ./...
 
     - name: Run acceptance tests
       run: $HOME/go/bin/godog
