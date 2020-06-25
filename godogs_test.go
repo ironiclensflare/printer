@@ -20,6 +20,11 @@ func iPrint(text string) error {
 	return nil
 }
 
+func iPrintTheFile(filename string) error {
+	fakePrinter.PrintFile(filename)
+	return nil
+}
+
 func iShouldReceiveASimulatedPrintoutContaining(text string) error {
 	if fakePrinterOutput == text {
 		return nil
@@ -30,5 +35,6 @@ func iShouldReceiveASimulatedPrintoutContaining(text string) error {
 func FeatureContext(s *godog.Suite) {
 	s.Step(`^I have an instance of the fake printer$`, iHaveAnInstanceOfTheFakePrinter)
 	s.Step(`^I print "([^"]*)"$`, iPrint)
+	s.Step(`^I print the file "([^"]*)"$`, iPrintTheFile)
 	s.Step(`^I should receive a simulated printout containing "([^"]*)"$`, iShouldReceiveASimulatedPrintoutContaining)
 }
