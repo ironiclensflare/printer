@@ -1,15 +1,22 @@
 package test
 
 import (
+	"os"
 	"testing"
 
 	"github.com/ironiclensflare/printer/pos"
 )
 
+var printerOutput string
+var fakePrinter pos.FakePrinter
+
+func TestMain(m *testing.M) {
+	fakePrinter = pos.NewFakePrinter(&printerOutput)
+	os.Exit(m.Run())
+}
+
 func TestPrintTextDoesNotError(t *testing.T) {
-	var printerOutput string
-	printer := pos.NewFakePrinter(&printerOutput)
-	printer.PrintText("Blah")
+	fakePrinter.PrintText("Blah")
 	if printerOutput == "Blah" {
 		return
 	}
@@ -17,9 +24,7 @@ func TestPrintTextDoesNotError(t *testing.T) {
 }
 
 func TestPrintFileDoesNotError(t *testing.T) {
-	var printerOutput string
-	printer := pos.NewFakePrinter(&printerOutput)
-	printer.PrintFile("blah.png")
+	fakePrinter.PrintFile("blah.png")
 	if printerOutput == "Just pretend I printed blah.png" {
 		return
 	}
