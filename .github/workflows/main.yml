@@ -21,6 +21,9 @@ jobs:
 
     - uses: actions/setup-go@v2.0.3
 
+    - name: Install godog
+      run: go get github.com/cucumber/godog/cmd/godog
+
     - name: Run unit tests
       run: go test test/*.go
 
