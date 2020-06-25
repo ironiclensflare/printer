@@ -1,23 +1,30 @@
 package main
 
 import (
+	"errors"
+
 	"github.com/cucumber/godog"
 	"github.com/ironiclensflare/printer/pos"
 )
 
 var fakePrinter pos.FakePrinter
+var fakePrinterOutput string = ""
 
 func iHaveAnInstanceOfTheFakePrinter() error {
-	fakePrinter = pos.FakePrinter{}
+	fakePrinter = pos.NewFakePrinter(&fakePrinterOutput)
 	return nil
 }
 
 func iPrint(text string) error {
-	return godog.ErrPending
+	fakePrinter.PrintText(text)
+	return nil
 }
 
 func iShouldReceiveASimulatedPrintoutContaining(text string) error {
-	return godog.ErrPending
+	if fakePrinterOutput == text {
+		return nil
+	}
+	return errors.New("Output was " + fakePrinterOutput + " but expected " + text)
 }
 
 func FeatureContext(s *godog.Suite) {

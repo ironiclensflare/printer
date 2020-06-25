@@ -1,20 +1,23 @@
 package pos
 
-import "fmt"
-
 // FakePrinter is a dummy printer for debugging.
-type FakePrinter struct{}
+type FakePrinter struct {
+	output *string
+}
 
 // PrintText pretends to send some text to the printer.
 func (p *FakePrinter) PrintText(text string) {
-	fmt.Println("🖨 --------")
-	fmt.Printf("🖨 BEEP BOOP BEEP I'M A FAKE PRINTER\n🖨 %s\n", text)
-	fmt.Println("🖨 --------")
+	*p.output = text
 }
 
 // PrintFile pretends to print a file.
 func (p *FakePrinter) PrintFile(filename string) {
-	fmt.Println("🖨 --------")
-	fmt.Printf("🖨 BEEP BOOP BEEP I'M A FAKE PRINTER\n🖨\n🖨 Just pretend I printed %s\n", filename)
-	fmt.Println("🖨 --------")
+	*p.output = "Just pretend I printed " + filename
+}
+
+// NewFakePrinter returns an instance of FakePrinter which sends its output to the given string.
+func NewFakePrinter(output *string) FakePrinter {
+	var fakePrinter = FakePrinter{}
+	fakePrinter.output = output
+	return fakePrinter
 }
