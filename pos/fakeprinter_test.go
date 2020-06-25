@@ -1,17 +1,15 @@
-package test
+package pos
 
 import (
 	"os"
 	"testing"
-
-	"github.com/ironiclensflare/printer/pos"
 )
 
 var printerOutput string
-var fakePrinter pos.FakePrinter
+var fakePrinter FakePrinter
 
 func TestMain(m *testing.M) {
-	fakePrinter = pos.NewFakePrinter(&printerOutput)
+	fakePrinter = NewFakePrinter(&printerOutput)
 	os.Exit(m.Run())
 }
 

@@ -19,7 +19,7 @@ func main() {
 	useFakePrinter = isFeatureSet("--no-print")
 	keepMessagesInQueue = isFeatureSet("--no-delete")
 
-	printer = DefaultContainer.GetPrinter()
+	printer = &pos.ThermalPrinter{}
 	if useFakePrinter {
 		log.Print("Using fake printer")
 		printer = &pos.FakePrinter{}
