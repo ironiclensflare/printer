@@ -4,6 +4,7 @@ Printer
 This module provides an interface for printing messages sent to an SQS queue in
 a variety of formats.
 
+![Build](https://github.com/ironiclensflare/printer/workflows/Build/badge.svg)
 
 Environment Variables
 ---------------------
