@@ -4,6 +4,7 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/ironiclensflare/printer/telegram/fakes"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -18,11 +19,16 @@ func TestGetStickerNoId(t *testing.T) {
 }
 
 func TestGetStickerValidId(t *testing.T) {
-	t.Skip("Incomplete test")
+	sticker, counter := getTestSticker()
+	filename, err := sticker.Get("12345")
 
-	sticker := Sticker{}
-	filename, error := sticker.Get("12345")
-
-	assert.Nil(t, error)
+	assert.NoError(t, err)
 	assert.Equal(t, "test.webp", filename)
+	assert.Equal(t, 1, *counter)
+}
+
+func getTestSticker() (*Sticker, *int) {
+	fakeHttpClient := fakes.GetFakeHttpClient()
+	sticker := Sticker{httpClient: fakeHttpClient}
+	return &sticker, &fakeHttpClient.PostFormCounter
 }

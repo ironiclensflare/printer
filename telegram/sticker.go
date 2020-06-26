@@ -1,14 +1,27 @@
 package telegram
 
-import "errors"
+import (
+	"errors"
+
+	"github.com/ironiclensflare/printer/telegram/http"
+)
 
 // Sticker represents a Telegram sticker.
-type Sticker struct{}
+type Sticker struct {
+	httpClient http.HttpPoster
+}
 
 // Get fetches a Telegram sticker by ID.
 func (s *Sticker) Get(id string) (string, error) {
 	if id == "" {
 		return "", errors.New("Invalid sticker ID")
 	}
-	return "", nil
+	s.httpClient.PostForm("", nil)
+	return "test.webp", nil
+}
+
+func GetSticker() *Sticker {
+	return &Sticker{
+		httpClient: http.GetHttpClient(),
+	}
 }
