@@ -19,16 +19,25 @@ func TestGetStickerNoId(t *testing.T) {
 }
 
 func TestGetStickerValidId(t *testing.T) {
-	sticker, counter := getTestSticker()
+	sticker, counters := getTestSticker()
 	filename, err := sticker.Get("12345")
 
 	assert.NoError(t, err)
-	assert.Equal(t, "test.webp", filename)
-	assert.Equal(t, 1, *counter)
+	assert.Equal(t, "12345.webp", filename)
+	assert.Equal(t, 1, *counters.GetCounter)
+	assert.Equal(t, 1, *counters.PostFormCounter)
 }
 
-func getTestSticker() (*Sticker, *int) {
-	fakeHttpClient := fakes.GetFakeHttpClient()
-	sticker := Sticker{httpClient: fakeHttpClient}
-	return &sticker, &fakeHttpClient.PostFormCounter
+func getTestSticker() (*Sticker, *Counters) {
+	fakeHTTPClient := fakes.GetFakeHttpClient()
+	sticker := Sticker{httpClient: fakeHTTPClient}
+	counters := Counters{}
+	counters.GetCounter = &fakeHTTPClient.GetCounter
+	counters.PostFormCounter = &fakeHTTPClient.PostFormCounter
+	return &sticker, &counters
+}
+
+type Counters struct {
+	GetCounter      *int
+	PostFormCounter *int
 }
