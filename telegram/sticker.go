@@ -60,7 +60,7 @@ func (s *Sticker) downloadSticker(fileID string, stickerID string) string {
 	const endpoint string = "https://api.telegram.org/file/bot"
 	stickerURL := endpoint + getBotToken() + "/" + fileID
 	fmt.Println("Attempting to download sticker at " + stickerURL)
-	stickerFileName := stickerID + ".webp"
+	stickerFileName := stickerID + ".png"
 	fileName, _ := s.httpClient.DownloadFile(stickerURL, stickerFileName)
 	return fileName
 }

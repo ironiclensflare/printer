@@ -2,11 +2,13 @@ package http
 
 import (
 	"fmt"
-	"io"
+	"image/png"
 	"net/http"
 	"net/url"
 	"os"
 	"path/filepath"
+
+	"golang.org/x/image/webp"
 )
 
 type HttpPoster interface {
@@ -38,6 +40,13 @@ func (h *HttpClient) DownloadFile(url string, name string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+
+	img, err := webp.Decode(resp.Body)
+	if err != nil {
+		fmt.Println("Error decoding WEBP", err)
+		return "", err
+	}
+
 	defer resp.Body.Close()
 
 	os.Mkdir("downloads", 0700)
@@ -49,8 +58,11 @@ func (h *HttpClient) DownloadFile(url string, name string) (string, error) {
 	}
 	defer out.Close()
 
-	_, err = io.Copy(out, resp.Body)
-	fmt.Println(err)
+	err = png.Encode(out, img)
+	if err != nil {
+		fmt.Println("Error saving PNG", err)
+		return "", err
+	}
 	return path, err
 }
 

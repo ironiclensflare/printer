@@ -24,7 +24,7 @@ func (h *FakeHttpClient) Get(url string) (*http.Response, error) {
 func (h *FakeHttpClient) DownloadFile(url string, name string) (string, error) {
 	h.DownloadFileCounter++
 	h.GetCounter++
-	return "", nil
+	return name, nil
 }
 
 func GetFakeHttpClient() *FakeHttpClient {
