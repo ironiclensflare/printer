@@ -26,6 +26,7 @@ func TestGetStickerValidId(t *testing.T) {
 	assert.Equal(t, "12345.webp", filename)
 	assert.Equal(t, 1, *counters.GetCounter)
 	assert.Equal(t, 1, *counters.PostFormCounter)
+	assert.Equal(t, 1, *counters.DownloadFileCounter)
 }
 
 func getTestSticker() (*Sticker, *Counters) {
@@ -34,10 +35,12 @@ func getTestSticker() (*Sticker, *Counters) {
 	counters := Counters{}
 	counters.GetCounter = &fakeHTTPClient.GetCounter
 	counters.PostFormCounter = &fakeHTTPClient.PostFormCounter
+	counters.DownloadFileCounter = &fakeHTTPClient.DownloadFileCounter
 	return &sticker, &counters
 }
 
 type Counters struct {
-	GetCounter      *int
-	PostFormCounter *int
+	GetCounter          *int
+	PostFormCounter     *int
+	DownloadFileCounter *int
 }

@@ -57,6 +57,8 @@ func parseMessages(messages []*sqs.Message) {
 			createCitation(name, offence, penalty)
 		case "STICKER":
 			log.Print("Message is a sticker")
+			stickerID := strings.Replace(*message.Body, "!STICKER", "", 1)
+			printer.PrintSticker(stickerID)
 		case "UNKNOWN":
 			log.Print("Message type is unknown")
 			printer.PrintText(*message.Body)

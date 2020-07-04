@@ -15,6 +15,10 @@ func (p *FakePrinter) PrintFile(filename string) {
 	*p.output = "Just pretend I printed " + filename
 }
 
+func (p *FakePrinter) PrintSticker(stickerID string) {
+	*p.output = "Just pretend I printed sticker ID " + stickerID
+}
+
 // NewFakePrinter returns an instance of FakePrinter which sends its output to the given string.
 func NewFakePrinter(output *string) FakePrinter {
 	var fakePrinter = FakePrinter{}
