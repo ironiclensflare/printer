@@ -2,11 +2,14 @@ package http
 
 import (
 	"fmt"
+	"image"
+	"image/jpeg" // Don't delete this
 	"image/png"
 	"net/http"
 	"net/url"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"golang.org/x/image/webp"
 )
@@ -41,9 +44,16 @@ func (h *HttpClient) DownloadFile(url string, name string) (string, error) {
 		return "", err
 	}
 
-	img, err := webp.Decode(resp.Body)
+	var img image.Image
+
+	if strings.HasSuffix(url, ".jpg") || strings.HasSuffix(url, ".jpeg") {
+		img, _, err = image.Decode(resp.Body)
+	} else {
+		img, err = webp.Decode(resp.Body)
+	}
+
 	if err != nil {
-		fmt.Println("Error decoding WEBP", err)
+		fmt.Println("Error decoding image", err)
 		return "", err
 	}
 
@@ -58,6 +68,7 @@ func (h *HttpClient) DownloadFile(url string, name string) (string, error) {
 	}
 	defer out.Close()
 
+	jpeg.Encode(out, img, &jpeg.Options{})
 	err = png.Encode(out, img)
 	if err != nil {
 		fmt.Println("Error saving PNG", err)
