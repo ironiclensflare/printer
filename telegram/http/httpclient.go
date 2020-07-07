@@ -11,6 +11,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/disintegration/imaging"
 	"golang.org/x/image/webp"
 )
 
@@ -48,6 +49,7 @@ func (h *HttpClient) DownloadFile(url string, name string) (string, error) {
 
 	if strings.HasSuffix(url, ".jpg") || strings.HasSuffix(url, ".jpeg") {
 		img, _, err = image.Decode(resp.Body)
+		img = imaging.Resize(img, 256, 256, imaging.Lanczos)
 	} else {
 		img, err = webp.Decode(resp.Body)
 	}
